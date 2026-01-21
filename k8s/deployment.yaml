@@ -1,0 +1,151 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openrag
+  namespace: default
+  labels:
+    app: openrag
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: openrag
+  template:
+    metadata:
+      labels:
+        app: openrag
+    spec:
+      containers:
+        - name: openrag
+          image: openrag:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: http
+          env:
+            - name: OPENRAG_LLM__OPENAI__API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openrag-secrets
+                  key: OPENAI_API_KEY
+          volumeMounts:
+            - name: config
+              mountPath: /app/configs
+              readOnly: true
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1000m"
+            limits:
+              memory: "4Gi"
+              cpu: "2000m"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+      volumes:
+        - name: config
+          configMap:
+            name: openrag-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openrag-service
+  namespace: default
+  labels:
+    app: openrag
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: openrag
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qdrant
+  namespace: default
+  labels:
+    app: qdrant
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qdrant
+  template:
+    metadata:
+      labels:
+        app: qdrant
+    spec:
+      containers:
+        - name: qdrant
+          image: qdrant/qdrant:latest
+          ports:
+            - containerPort: 6333
+              name: http
+            - containerPort: 6334
+              name: grpc
+          volumeMounts:
+            - name: qdrant-storage
+              mountPath: /qdrant/storage
+          resources:
+            requests:
+              memory: "1Gi"
+              cpu: "500m"
+            limits:
+              memory: "2Gi"
+              cpu: "1000m"
+      volumes:
+        - name: qdrant-storage
+          persistentVolumeClaim:
+            claimName: qdrant-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qdrant-service
+  namespace: default
+  labels:
+    app: qdrant
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6333
+      targetPort: 6333
+      protocol: TCP
+      name: http
+    - port: 6334
+      targetPort: 6334
+      protocol: TCP
+      name: grpc
+  selector:
+    app: qdrant
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qdrant-pvc
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi

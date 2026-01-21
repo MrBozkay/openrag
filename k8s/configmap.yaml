@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openrag-config
+  namespace: default
+data:
+  config.yaml: |
+    vector_store:
+      type: qdrant
+      qdrant:
+        host: qdrant-service
+        port: 6333
+        collection_name: openrag
+        vector_size: 384
+        distance_metric: cosine
+    
+    embedding:
+      model_name: sentence-transformers/all-MiniLM-L6-v2
+      batch_size: 32
+      device: cpu
+      normalize_embeddings: true
+    
+    llm:
+      provider: openai
+      openai:
+        model: gpt-3.5-turbo
+        temperature: 0.7
+        max_tokens: 1000
+        timeout: 30
+        max_retries: 3
+    
+    chunking:
+      strategy: fixed
+      chunk_size: 500
+      chunk_overlap: 50
+    
+    retrieval:
+      top_k: 5
+      min_similarity: 0.0
+    
+    api:
+      host: 0.0.0.0
+      port: 8000
+      reload: false
+      workers: 1
+      cors_origins:
+        - "*"
+    
+    logging:
+      level: INFO

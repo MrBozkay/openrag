@@ -1,0 +1,89 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# OpenRAG specific
+data/
+logs/
+*.log
+config.local.yaml
+.env
+.env.local
+
+# Vector stores
+chroma_db/
+qdrant_storage/
+
+# Model cache
+models/
+.cache/
+PRD.md
+# Temporary files
+tmp/
+temp/
+*.tmp
+.agent/
+
+# Linting and Code Quality
+.ruff_cache/
+.pre-commit-config.yaml.save
+
+# System Files
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Documentation
+docs/_build/
+docs/build/
+site/
+
+# Backup files
+*.bak
+*.old
+*.orig

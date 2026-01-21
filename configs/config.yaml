@@ -1,0 +1,58 @@
+vector_store:
+  type: qdrant
+  qdrant:
+    host: localhost
+    port: 6333
+    collection_name: openrag
+    vector_size: 384
+    distance_metric: cosine
+    api_key: null
+  chroma:
+    persist_directory: ./chroma_db
+    collection_name: openrag
+
+embedding:
+  model_name: sentence-transformers/all-MiniLM-L6-v2
+  batch_size: 32
+  device: cpu
+  normalize_embeddings: true
+
+llm:
+  provider: openai
+  openai:
+    model: gpt-3.5-turbo
+    temperature: 0.7
+    max_tokens: 1000
+    api_key: null # Set via OPENAI_API_KEY environment variable
+    timeout: 30
+    max_retries: 3
+  huggingface:
+    model_name: meta-llama/Llama-2-7b-chat-hf
+    device: cpu
+    load_in_8bit: false
+    load_in_4bit: false
+    max_new_tokens: 512
+    temperature: 0.7
+    top_p: 0.9
+
+chunking:
+  strategy: fixed # Options: fixed, semantic
+  chunk_size: 500
+  chunk_overlap: 50
+
+retrieval:
+  top_k: 5
+  min_similarity: 0.0
+
+api:
+  host: 0.0.0.0
+  port: 8000
+  reload: false
+  workers: 1
+  cors_origins:
+    - "*"
+
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file: null
