@@ -17,7 +17,7 @@ from openrag.core.ingestion import IngestionPipeline
 from openrag.core.pipeline import RAGPipeline
 from openrag.core.retriever import Retriever
 from openrag.embeddings import SentenceTransformerEmbedding
-from openrag.llms import HuggingFaceLLM, OpenAILLM
+from openrag.llms import HuggingFaceLLM, OllamaLLM, OpenAILLM
 from openrag.loaders import DocumentLoader
 from openrag.vector_stores import ChromaVectorStore, QdrantVectorStore
 
@@ -55,6 +55,8 @@ def lifespan(app: FastAPI) -> Any:
     # Initialize LLM
     if config.llm.provider.value == "openai":
         llm = OpenAILLM(config.llm.openai)
+    elif config.llm.provider.value == "ollama":
+        llm = OllamaLLM(config.llm.ollama)
     else:
         llm = HuggingFaceLLM(config.llm.huggingface)
 

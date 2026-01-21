@@ -10,6 +10,7 @@ from openrag.config import (
     ChunkingConfig,
     EmbeddingConfig,
     OpenAIConfig,
+    OllamaConfig,
     OpenRAGConfig,
     QdrantConfig,
     RetrievalConfig,
@@ -120,3 +121,47 @@ def test_openrag_config_env_override():
     # Cleanup
     del os.environ["OPENRAG_VECTOR_STORE__TYPE"]
     del os.environ["OPENRAG_EMBEDDING__BATCH_SIZE"]
+
+
+def test_ollama_config_defaults():
+    """Test Ollama config with defaults."""
+    config = OllamaConfig()
+    assert config.host == "http://localhost"
+    assert config.port == 11434
+    assert config.model == "llama3"
+    assert config.temperature == 0.7
+    assert config.max_tokens == 1000
+    assert config.timeout == 60
+
+
+def test_ollama_config_custom_values():
+    """Test Ollama config with custom values."""
+    config = OllamaConfig(
+        host="http://ollama.example.com",
+        port=8080,
+        model="mistral",
+        temperature=0.5,
+        max_tokens=512,
+        timeout=120,
+    )
+    assert config.host == "http://ollama.example.com"
+    assert config.port == 8080
+    assert config.model == "mistral"
+    assert config.temperature == 0.5
+    assert config.max_tokens == 512
+    assert config.timeout == 120
+
+
+def test_ollama_config_validation():
+    """Test Ollama config validation."""
+    # Valid config with system prompt
+    config = OllamaConfig(system_prompt="You are a helpful assistant.")
+    assert config.system_prompt == "You are a helpful assistant."
+
+    # Invalid temperature
+    with pytest.raises(ValidationError):
+        OllamaConfig(temperature=3.0)
+
+    # Invalid max_tokens
+    with pytest.raises(ValidationError):
+        OllamaConfig(max_tokens=0)

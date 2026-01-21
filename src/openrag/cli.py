@@ -18,7 +18,7 @@ from openrag.core.ingestion import IngestionPipeline
 from openrag.core.pipeline import RAGPipeline
 from openrag.core.retriever import Retriever
 from openrag.embeddings import SentenceTransformerEmbedding
-from openrag.llms import HuggingFaceLLM, OpenAILLM
+from openrag.llms import HuggingFaceLLM, OllamaLLM, OpenAILLM
 from openrag.vector_stores import ChromaVectorStore, QdrantVectorStore
 
 console = Console()
@@ -112,7 +112,12 @@ qdrant_storage/
 
 @cli.command()
 @click.option(
-    "--input", "-i", "input_path", required=True, type=click.Path(exists=True), help="Input directory or file"
+    "--input",
+    "-i",
+    "input_path",
+    required=True,
+    type=click.Path(exists=True),
+    help="Input directory or file",
 )
 @click.option("--config", "-c", type=click.Path(exists=True), help="Config file path")
 @click.option("--collection", default="openrag", help="Collection name")
@@ -218,7 +223,9 @@ def search(
 @click.option("--host", help="API host")
 @click.option("--port", type=int, help="API port")
 @click.pass_context
-def serve(ctx: click.Context, config: Optional[str], host: Optional[str], port: Optional[int]) -> None:
+def serve(
+    ctx: click.Context, config: Optional[str], host: Optional[str], port: Optional[int]
+) -> None:
     """Start API server."""
     import uvicorn
 

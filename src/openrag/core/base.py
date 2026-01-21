@@ -1,6 +1,7 @@
 """Base abstractions for OpenRAG components."""
 
 from abc import ABC, abstractmethod
+from collections.abc import AsyncIterator
 from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
@@ -96,7 +97,7 @@ class LLM(ABC):
     @abstractmethod
     async def generate_stream(
         self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
-    ) -> Any:
+    ) -> AsyncIterator[str]:
         """Generate text with streaming."""
         pass
 

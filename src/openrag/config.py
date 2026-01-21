@@ -20,6 +20,7 @@ class LLMProvider(str, Enum):
 
     OPENAI = "openai"
     HUGGINGFACE = "huggingface"
+    OLLAMA = "ollama"
 
 
 class QdrantConfig(BaseModel):
@@ -99,20 +100,31 @@ class HuggingFaceConfig(BaseModel):
     top_p: float = Field(default=0.9, ge=0.0, le=1.0)
 
 
+class OllamaConfig(BaseModel):
+    """Ollama LLM configuration."""
+
+    host: str = Field(default="http://localhost", description="Ollama server host")
+    port: int = Field(default=11434, description="Ollama server port")
+    model: str = Field(default="llama3", description="Ollama model name")
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Sampling temperature")
+    max_tokens: int = Field(default=1000, gt=0, description="Maximum tokens to generate")
+    timeout: int = Field(default=60, description="Request timeout in seconds")
+    system_prompt: Optional[str] = Field(default=None, description="System prompt for the model")
+
+
 class LLMConfig(BaseModel):
     """LLM configuration."""
 
     provider: LLMProvider = Field(default=LLMProvider.OPENAI)
     openai: OpenAIConfig = Field(default_factory=OpenAIConfig)
     huggingface: HuggingFaceConfig = Field(default_factory=HuggingFaceConfig)
+    ollama: OllamaConfig = Field(default_factory=OllamaConfig)
 
 
 class ChunkingConfig(BaseModel):
     """Document chunking configuration."""
 
-    strategy: Literal["fixed", "semantic"] = Field(
-        default="fixed", description="Chunking strategy"
-    )
+    strategy: Literal["fixed", "semantic"] = Field(default="fixed", description="Chunking strategy")
     chunk_size: int = Field(default=500, gt=0, description="Chunk size in characters")
     chunk_overlap: int = Field(default=50, ge=0, description="Overlap between chunks")
 
