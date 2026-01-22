@@ -114,9 +114,7 @@ class GenerateResponse(BaseModel):
     """Response model for generation."""
 
     text: str = Field(..., description="Generated text")
-    sources: list[dict[str, Any]] = Field(
-        default_factory=list, description="Source documents"
-    )
+    sources: list[dict[str, Any]] = Field(default_factory=list, description="Source documents")
 
 
 class SearchRequest(BaseModel):
@@ -291,9 +289,7 @@ async def ingest(files: list[UploadFile] | None = None) -> IngestResponse:
         if not documents:
             raise HTTPException(status_code=400, detail="No valid documents provided")
 
-        stats = await ingestion_pipeline.ingest_documents(
-            documents, show_progress=False
-        )
+        stats = await ingestion_pipeline.ingest_documents(documents, show_progress=False)
 
         return IngestResponse(
             documents=stats["documents"],

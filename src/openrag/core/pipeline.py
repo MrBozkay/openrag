@@ -90,9 +90,7 @@ Always cite the sources you use in your answer."""
 
         if not sources:
             logger.warning("No relevant documents found")
-            response_text = (
-                "I couldn't find any relevant information to answer your question."
-            )
+            response_text = "I couldn't find any relevant information to answer your question."
             return RAGResponse(text=response_text, sources=[])
 
         # Construct context from sources
@@ -122,9 +120,7 @@ Answer:"""
         )
 
         logger.info(f"Generated response: {len(response_text)} characters")
-        return RAGResponse(
-            text=response_text, sources=sources if include_sources else []
-        )
+        return RAGResponse(text=response_text, sources=sources if include_sources else [])
 
     async def generate_stream(
         self,

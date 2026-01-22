@@ -61,9 +61,7 @@ class EmbeddingConfig(BaseModel):
         description="HuggingFace model name",
     )
     batch_size: int = Field(default=32, description="Batch size for embedding")
-    device: Literal["cpu", "cuda", "mps"] = Field(
-        default="cpu", description="Device to use"
-    )
+    device: Literal["cpu", "cuda", "mps"] = Field(default="cpu", description="Device to use")
     normalize_embeddings: bool = Field(
         default=True, description="Normalize embeddings to unit length"
     )
@@ -81,12 +79,8 @@ class OpenAIConfig(BaseModel):
     """OpenAI LLM configuration."""
 
     model: str = Field(default="gpt-3.5-turbo", description="OpenAI model name")
-    temperature: float = Field(
-        default=0.7, ge=0.0, le=2.0, description="Sampling temperature"
-    )
-    max_tokens: int = Field(
-        default=1000, gt=0, description="Maximum tokens to generate"
-    )
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Sampling temperature")
+    max_tokens: int = Field(default=1000, gt=0, description="Maximum tokens to generate")
     api_key: str | None = Field(default=None, description="OpenAI API key")
     timeout: int = Field(default=30, description="Request timeout in seconds")
     max_retries: int = Field(default=3, description="Maximum retry attempts")
@@ -99,12 +93,8 @@ class HuggingFaceConfig(BaseModel):
         default="meta-llama/Llama-2-7b-chat-hf", description="HuggingFace model name"
     )
     device: Literal["cpu", "cuda", "mps"] = Field(default="cpu")
-    load_in_8bit: bool = Field(
-        default=False, description="Load model in 8-bit quantization"
-    )
-    load_in_4bit: bool = Field(
-        default=False, description="Load model in 4-bit quantization"
-    )
+    load_in_8bit: bool = Field(default=False, description="Load model in 8-bit quantization")
+    load_in_4bit: bool = Field(default=False, description="Load model in 4-bit quantization")
     max_new_tokens: int = Field(default=512, gt=0)
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
     top_p: float = Field(default=0.9, ge=0.0, le=1.0)
@@ -116,16 +106,10 @@ class OllamaConfig(BaseModel):
     host: str = Field(default="http://localhost", description="Ollama server host")
     port: int = Field(default=11434, description="Ollama server port")
     model: str = Field(default="llama3", description="Ollama model name")
-    temperature: float = Field(
-        default=0.7, ge=0.0, le=2.0, description="Sampling temperature"
-    )
-    max_tokens: int = Field(
-        default=1000, gt=0, description="Maximum tokens to generate"
-    )
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0, description="Sampling temperature")
+    max_tokens: int = Field(default=1000, gt=0, description="Maximum tokens to generate")
     timeout: int = Field(default=60, description="Request timeout in seconds")
-    system_prompt: str | None = Field(
-        default=None, description="System prompt for the model"
-    )
+    system_prompt: str | None = Field(default=None, description="System prompt for the model")
 
 
 class LLMConfig(BaseModel):
@@ -140,9 +124,7 @@ class LLMConfig(BaseModel):
 class ChunkingConfig(BaseModel):
     """Document chunking configuration."""
 
-    strategy: Literal["fixed", "semantic"] = Field(
-        default="fixed", description="Chunking strategy"
-    )
+    strategy: Literal["fixed", "semantic"] = Field(default="fixed", description="Chunking strategy")
     chunk_size: int = Field(default=500, gt=0, description="Chunk size in characters")
     chunk_overlap: int = Field(default=50, ge=0, description="Overlap between chunks")
 

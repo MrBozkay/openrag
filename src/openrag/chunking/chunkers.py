@@ -100,10 +100,7 @@ class SemanticChunker(Chunker):
                 continue
 
             # If adding this paragraph exceeds chunk size, save current chunk
-            if (
-                current_chunk
-                and len(current_chunk) + len(para) > self.config.chunk_size
-            ):
+            if current_chunk and len(current_chunk) + len(para) > self.config.chunk_size:
                 metadata = {
                     **document.metadata,
                     "chunk_index": chunk_index,

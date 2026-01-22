@@ -91,9 +91,7 @@ class LLM(ABC):
     """Abstract base class for LLM providers."""
 
     @abstractmethod
-    async def generate(
-        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
-    ) -> str:
+    async def generate(self, prompt: str, system_prompt: str | None = None, **kwargs: Any) -> str:
         """Generate text from prompt."""
         pass
 

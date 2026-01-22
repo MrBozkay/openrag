@@ -31,9 +31,7 @@ class Retriever:
         self.config = config
         self.collection_name = collection_name
 
-    async def retrieve(
-        self, query: str, top_k: int | None = None
-    ) -> list[SearchResult]:
+    async def retrieve(self, query: str, top_k: int | None = None) -> list[SearchResult]:
         """Retrieve relevant documents for a query.
 
         Args:

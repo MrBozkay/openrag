@@ -35,9 +35,7 @@ class OpenAILLM(LLM):
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
-    async def generate(
-        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
-    ) -> str:
+    async def generate(self, prompt: str, system_prompt: str | None = None, **kwargs: Any) -> str:
         """Generate text from prompt.
 
         Args:

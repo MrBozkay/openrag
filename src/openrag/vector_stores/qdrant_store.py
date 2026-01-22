@@ -53,9 +53,7 @@ class QdrantVectorStore(VectorStore):
                 distance=distance_map[self.config.distance_metric],
             ),
         )
-        logger.info(
-            f"Created collection {collection_name} with vector size {vector_size}"
-        )
+        logger.info(f"Created collection {collection_name} with vector size {vector_size}")
 
     async def upsert(
         self,

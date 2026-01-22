@@ -118,9 +118,7 @@ qdrant_storage/
 @click.option("--config", "-c", type=click.Path(exists=True), help="Config file path")
 @click.option("--collection", default="openrag", help="Collection name")
 @click.pass_context
-def ingest(
-    ctx: click.Context, input_path: str, config: str | None, collection: str
-) -> None:
+def ingest(ctx: click.Context, input_path: str, config: str | None, collection: str) -> None:
     """Ingest documents into vector store."""
     # Load config
     cfg = OpenRAGConfig.from_yaml(Path(config)) if config else OpenRAGConfig()
@@ -219,9 +217,7 @@ def search(
 @click.option("--host", help="API host")
 @click.option("--port", type=int, help="API port")
 @click.pass_context
-def serve(
-    ctx: click.Context, config: str | None, host: str | None, port: int | None
-) -> None:
+def serve(ctx: click.Context, config: str | None, host: str | None, port: int | None) -> None:
     """Start API server."""
     import uvicorn
 

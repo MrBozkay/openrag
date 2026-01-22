@@ -23,13 +23,9 @@ class OllamaLLM(LLM):
         """
         self.config = config
         self.base_url = f"{config.host}:{config.port}"
-        logger.info(
-            f"Initialized Ollama client with model: {config.model} at {self.base_url}"
-        )
+        logger.info(f"Initialized Ollama client with model: {config.model} at {self.base_url}")
 
-    async def generate(
-        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
-    ) -> str:
+    async def generate(self, prompt: str, system_prompt: str | None = None, **kwargs: Any) -> str:
         """Generate text from prompt.
 
         Args:
@@ -52,9 +48,7 @@ class OllamaLLM(LLM):
                     "model": kwargs.get("model", self.config.model),
                     "messages": messages,
                     "options": {
-                        "temperature": kwargs.get(
-                            "temperature", self.config.temperature
-                        ),
+                        "temperature": kwargs.get("temperature", self.config.temperature),
                         "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
                     },
                     "stream": False,
@@ -94,9 +88,7 @@ class OllamaLLM(LLM):
                     "model": kwargs.get("model", self.config.model),
                     "messages": messages,
                     "options": {
-                        "temperature": kwargs.get(
-                            "temperature", self.config.temperature
-                        ),
+                        "temperature": kwargs.get("temperature", self.config.temperature),
                         "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
                     },
                     "stream": True,

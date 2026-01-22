@@ -29,9 +29,7 @@ class ChromaVectorStore(VectorStore):
                 anonymized_telemetry=False,
             )
         )
-        logger.info(
-            f"Initialized Chroma with persist directory: {config.persist_directory}"
-        )
+        logger.info(f"Initialized Chroma with persist directory: {config.persist_directory}")
 
     async def create_collection(self, collection_name: str, vector_size: int) -> None:
         """Create a new collection.

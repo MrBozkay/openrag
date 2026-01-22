@@ -51,9 +51,7 @@ class HuggingFaceLLM(LLM):
 
         logger.info(f"Loaded model on device: {config.device}")
 
-    async def generate(
-        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
-    ) -> str:
+    async def generate(self, prompt: str, system_prompt: str | None = None, **kwargs: Any) -> str:
         """Generate text from prompt.
 
         Args:
