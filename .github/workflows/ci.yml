@@ -28,7 +28,7 @@ jobs:
         run: ruff check . --exit-zero
 
       - name: Run Ruff format check
-        run: ruff format --check . --exit-zero
+        run: ruff format --check . || true
 
       - name: Run Black check
         run: black --check . || true
@@ -42,7 +42,6 @@ jobs:
   test:
     name: Tests (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
-    needs: quality
     strategy:
       fail-fast: false
       matrix:
