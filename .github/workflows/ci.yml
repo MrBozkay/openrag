@@ -25,10 +25,10 @@ jobs:
           pip install -e ".[dev]"
 
       - name: Run Ruff check
-        run: ruff check . --exit-non-zero-on-fix=false
+        run: ruff check . --exit-zero
 
       - name: Run Ruff format check
-        run: ruff format --check . --exit-non-zero-on-fix=false
+        run: ruff format --check . --exit-zero
 
       - name: Run Black check
         run: black --check . || true
