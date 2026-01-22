@@ -16,7 +16,10 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 30s
     restart: unless-stopped
+    networks:
+      - openrag-network
 
   redis:
     image: redis:7-alpine
@@ -31,11 +34,15 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - openrag-network
 
   openrag:
     build:
       context: .
       dockerfile: Dockerfile
+      target: production
+    image: openrag:latest
     container_name: openrag-app
     ports:
       - "8000:8000"
@@ -49,6 +56,11 @@ services:
       - OPENRAG_VECTOR_STORE__QDRANT__PORT=6333
       - OPENRAG_LLM__PROVIDER=openai
       - OPENRAG_LLM__OPENAI__API_KEY=${OPENAI_API_KEY}
+      - OPENRAG_REDIS__URL=redis://redis:6379
+      - OPENRAG_LOGGING__LEVEL=INFO
+      - OPENRAG_API__HOST=0.0.0.0
+      - OPENRAG_API__PORT=8000
+      - OPENRAG_API__RELOAD=false
     depends_on:
       qdrant:
         condition: service_healthy
@@ -61,6 +73,8 @@ services:
       retries: 3
       start_period: 40s
     restart: unless-stopped
+    networks:
+      - openrag-network
 
 volumes:
   qdrant_storage:
@@ -69,5 +83,5 @@ volumes:
     driver: local
 
 networks:
-  default:
+  openrag-network:
     name: openrag-network

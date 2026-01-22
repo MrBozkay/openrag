@@ -1,0 +1,28 @@
+secrets:
+  skipPaths:
+    - ".git/"
+    - "node_modules/"
+    - ".venv/"
+    - "venv/"
+    - "__pycache__/"
+    - "*.egg-info/"
+    - "dist/"
+    - "build/"
+  whiteList:
+    placeholder: true
+    test_key: true
+
+security:
+  minimum_severity: "medium"
+  dependency_scan: true
+  container_scan: true
+  code_scan: true
+
+compliance:
+  standards:
+    - "owasp-top-10"
+    - "cwe-top-25"
+  required_checks:
+    - "dependency-audit"
+    - "secret-detection"
+    - "static-analysis"

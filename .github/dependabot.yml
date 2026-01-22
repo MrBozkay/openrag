@@ -1,0 +1,45 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        labels:
+          - "security"
+          - "priority:critical"
+      core-dependencies:
+        patterns:
+          - "fastapi"
+          - "pydantic"
+          - "uvicorn"
+        labels:
+          - "dependencies"
+      dev-dependencies:
+        patterns:
+          - "pytest*"
+          - "ruff"
+          - "mypy"
+          - "black"
+        labels:
+          - "dependencies"
+          - "dev"
+
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"

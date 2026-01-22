@@ -1,0 +1,23 @@
+# CODEOWNERS
+
+* @MrBozkay
+
+/docs/ @MrBozkay
+README.md @MrBozkay
+CONTRIBUTING.md @MrBozkay
+CHANGELOG.md @MrBozkay
+
+.github/workflows/ @MrBozkay
+
+Dockerfile @MrBozkay
+docker-compose.yml @MrBozkay
+k8s/ @MrBozkay
+
+src/openrag/core/ @MrBozkay
+src/openrag/api/ @MrBozkay
+src/openrag/cli.py @MrBozkay
+src/openrag/vector_stores/ @MrBozkay
+src/openrag/llms/ @MrBozkay
+src/openrag/embeddings/ @MrBozkay
+src/openrag/loaders/ @MrBozkay
+src/openrag/chunking/ @MrBozkay
