@@ -1,7 +1,7 @@
 """Chroma vector store implementation."""
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 from uuid import uuid4
 
 import chromadb
@@ -29,7 +29,9 @@ class ChromaVectorStore(VectorStore):
                 anonymized_telemetry=False,
             )
         )
-        logger.info(f"Initialized Chroma with persist directory: {config.persist_directory}")
+        logger.info(
+            f"Initialized Chroma with persist directory: {config.persist_directory}"
+        )
 
     async def create_collection(self, collection_name: str, vector_size: int) -> None:
         """Create a new collection.
@@ -49,7 +51,10 @@ class ChromaVectorStore(VectorStore):
         logger.info(f"Created collection {collection_name}")
 
     async def upsert(
-        self, collection_name: str, vectors: List[List[float]], payloads: List[Dict[str, Any]]
+        self,
+        collection_name: str,
+        vectors: list[list[float]],
+        payloads: list[dict[str, Any]],
     ) -> None:
         """Upsert vectors with payloads.
 
@@ -76,8 +81,8 @@ class ChromaVectorStore(VectorStore):
         logger.info(f"Upserted {len(vectors)} vectors to {collection_name}")
 
     async def search(
-        self, collection_name: str, query_vector: List[float], top_k: int = 5
-    ) -> List[SearchResult]:
+        self, collection_name: str, query_vector: list[float], top_k: int = 5
+    ) -> list[SearchResult]:
         """Search for similar vectors.
 
         Args:
@@ -142,7 +147,7 @@ class ChromaVectorStore(VectorStore):
         collections = self.client.list_collections()
         return any(col.name == collection_name for col in collections)
 
-    def get_collection_info(self, collection_name: str) -> Dict[str, Any]:
+    def get_collection_info(self, collection_name: str) -> dict[str, Any]:
         """Get collection information.
 
         Args:

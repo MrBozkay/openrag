@@ -1,6 +1,14 @@
 """Core module initialization."""
 
-from openrag.core.base import Chunk, Chunker, Document, Embedding, LLM, SearchResult, VectorStore
+from openrag.core.base import (
+    LLM,
+    Chunk,
+    Chunker,
+    Document,
+    Embedding,
+    SearchResult,
+    VectorStore,
+)
 
 __all__ = [
     "Document",

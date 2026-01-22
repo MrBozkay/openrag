@@ -1,10 +1,11 @@
 """Tests for LLM implementations."""
 
-import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from openrag.config import OpenAIConfig, OllamaConfig, HuggingFaceConfig
-from openrag.llms import OpenAILLM, OllamaLLM, HuggingFaceLLM
+import pytest
+
+from openrag.config import HuggingFaceConfig, OllamaConfig, OpenAIConfig
+from openrag.llms import HuggingFaceLLM, OllamaLLM, OpenAILLM
 
 
 class TestOpenAILLM:
@@ -63,7 +64,9 @@ class TestOllamaLLM:
         # Mock httpx client
         mock_response = MagicMock()
         mock_response.raise_for_status = MagicMock()
-        mock_response.json.return_value = {"message": {"content": "Test response from Ollama"}}
+        mock_response.json.return_value = {
+            "message": {"content": "Test response from Ollama"}
+        }
 
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
@@ -83,7 +86,9 @@ class TestOllamaLLM:
 
         mock_response = MagicMock()
         mock_response.raise_for_status = MagicMock()
-        mock_response.json.return_value = {"message": {"content": "Response with context"}}
+        mock_response.json.return_value = {
+            "message": {"content": "Response with context"}
+        }
 
         with patch("httpx.AsyncClient") as mock_client_class:
             mock_client = AsyncMock()
@@ -102,7 +107,9 @@ class TestOllamaLLM:
             json_data = call_args.kwargs.get("json", call_args[1].get("json", {}))
             assert len(json_data["messages"]) == 2
             assert json_data["messages"][0]["role"] == "system"
-            assert json_data["messages"][0]["content"] == "You are a programming expert."
+            assert (
+                json_data["messages"][0]["content"] == "You are a programming expert."
+            )
             assert json_data["messages"][1]["role"] == "user"
             assert json_data["messages"][1]["content"] == "What is Python?"
 

@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import AsyncIterator
-from typing import Any, Optional
+from typing import Any
 
 from openai import AsyncOpenAI
 from tenacity import retry, stop_after_attempt, wait_exponential
@@ -36,7 +36,7 @@ class OpenAILLM(LLM):
         reraise=True,
     )
     async def generate(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> str:
         """Generate text from prompt.
 
@@ -65,7 +65,7 @@ class OpenAILLM(LLM):
         return content
 
     async def generate_stream(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> AsyncIterator[str]:
         """Generate text with streaming.
 

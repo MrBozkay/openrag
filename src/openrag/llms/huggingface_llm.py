@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import AsyncIterator
-from typing import Any, Optional
+from typing import Any
 
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
@@ -52,7 +52,7 @@ class HuggingFaceLLM(LLM):
         logger.info(f"Loaded model on device: {config.device}")
 
     async def generate(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> str:
         """Generate text from prompt.
 
@@ -95,7 +95,7 @@ class HuggingFaceLLM(LLM):
         return generated_text
 
     async def generate_stream(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> AsyncIterator[str]:
         """Generate text with streaming.
 

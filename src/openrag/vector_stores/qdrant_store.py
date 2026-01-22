@@ -1,7 +1,7 @@
 """Qdrant vector store implementation."""
 
 import logging
-from typing import Any, Dict, List
+from typing import Any
 
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
@@ -53,10 +53,15 @@ class QdrantVectorStore(VectorStore):
                 distance=distance_map[self.config.distance_metric],
             ),
         )
-        logger.info(f"Created collection {collection_name} with vector size {vector_size}")
+        logger.info(
+            f"Created collection {collection_name} with vector size {vector_size}"
+        )
 
     async def upsert(
-        self, collection_name: str, vectors: List[List[float]], payloads: List[Dict[str, Any]]
+        self,
+        collection_name: str,
+        vectors: list[list[float]],
+        payloads: list[dict[str, Any]],
     ) -> None:
         """Upsert vectors with payloads.
 
@@ -67,15 +72,15 @@ class QdrantVectorStore(VectorStore):
         """
         points = [
             PointStruct(id=i, vector=vector, payload=payload)
-            for i, (vector, payload) in enumerate(zip(vectors, payloads))
+            for i, (vector, payload) in enumerate(zip(vectors, payloads, strict=True))
         ]
 
         self.client.upsert(collection_name=collection_name, points=points)
         logger.info(f"Upserted {len(points)} vectors to {collection_name}")
 
     async def search(
-        self, collection_name: str, query_vector: List[float], top_k: int = 5
-    ) -> List[SearchResult]:
+        self, collection_name: str, query_vector: list[float], top_k: int = 5
+    ) -> list[SearchResult]:
         """Search for similar vectors.
 
         Args:
@@ -132,7 +137,7 @@ class QdrantVectorStore(VectorStore):
         collections = self.client.get_collections().collections
         return any(col.name == collection_name for col in collections)
 
-    def get_collection_info(self, collection_name: str) -> Dict[str, Any]:
+    def get_collection_info(self, collection_name: str) -> dict[str, Any]:
         """Get collection information.
 
         Args:

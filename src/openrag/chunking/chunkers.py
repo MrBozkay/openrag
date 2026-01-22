@@ -2,7 +2,6 @@
 
 import logging
 import re
-from typing import List
 
 from openrag.config import ChunkingConfig
 from openrag.core.base import Chunk, Chunker, Document
@@ -21,7 +20,7 @@ class FixedSizeChunker(Chunker):
         """
         self.config = config
 
-    def chunk(self, document: Document) -> List[Chunk]:
+    def chunk(self, document: Document) -> list[Chunk]:
         """Split document into fixed-size chunks.
 
         Args:
@@ -77,7 +76,7 @@ class SemanticChunker(Chunker):
         """
         self.config = config
 
-    def chunk(self, document: Document) -> List[Chunk]:
+    def chunk(self, document: Document) -> list[Chunk]:
         """Split document into semantic chunks.
 
         Args:
@@ -101,7 +100,10 @@ class SemanticChunker(Chunker):
                 continue
 
             # If adding this paragraph exceeds chunk size, save current chunk
-            if current_chunk and len(current_chunk) + len(para) > self.config.chunk_size:
+            if (
+                current_chunk
+                and len(current_chunk) + len(para) > self.config.chunk_size
+            ):
                 metadata = {
                     **document.metadata,
                     "chunk_index": chunk_index,

@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import List
 
 from rich.progress import Progress, SpinnerColumn, TextColumn
 
@@ -39,8 +38,8 @@ class IngestionPipeline:
         self.chunker = get_chunker(chunking_config)
 
     async def ingest_documents(
-        self, documents: List[Document], show_progress: bool = True
-    ) -> Dict[str, int]:
+        self, documents: list[Document], show_progress: bool = True
+    ) -> dict[str, int]:
         """Ingest documents into vector store.
 
         Args:
@@ -57,7 +56,7 @@ class IngestionPipeline:
                 vector_size=self.embedding.dimension,
             )
 
-        all_chunks: List[Chunk] = []
+        all_chunks: list[Chunk] = []
 
         # Chunk documents
         with Progress(
@@ -132,7 +131,7 @@ class IngestionPipeline:
 
     async def ingest_directory(
         self, directory: Path, recursive: bool = True, show_progress: bool = True
-    ) -> Dict[str, int]:
+    ) -> dict[str, int]:
         """Ingest all documents from a directory.
 
         Args:
@@ -151,6 +150,3 @@ class IngestionPipeline:
             return {"documents": 0, "chunks": 0, "vectors": 0}
 
         return await self.ingest_documents(documents, show_progress=show_progress)
-
-
-from typing import Dict

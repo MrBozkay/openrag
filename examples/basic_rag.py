@@ -4,7 +4,6 @@ import asyncio
 import os
 from pathlib import Path
 
-from openrag.chunking import get_chunker
 from openrag.config import (
     ChunkingConfig,
     EmbeddingConfig,
@@ -67,11 +66,10 @@ async def main():
     sample_docs_dir.mkdir(exist_ok=True)
 
     # Create sample documents
-    (sample_docs_dir / "ml.txt").write_text(
-        """Machine Learning Overview
+    (sample_docs_dir / "ml.txt").write_text("""Machine Learning Overview
 
-Machine learning is a subset of artificial intelligence that focuses on the development 
-of algorithms and statistical models that enable computers to improve their performance 
+Machine learning is a subset of artificial intelligence that focuses on the development
+of algorithms and statistical models that enable computers to improve their performance
 on a specific task through experience.
 
 There are three main types of machine learning:
@@ -79,15 +77,13 @@ There are three main types of machine learning:
 2. Unsupervised Learning: Finding patterns in unlabeled data
 3. Reinforcement Learning: Learning through trial and error
 
-Common applications include image recognition, natural language processing, 
-recommendation systems, and autonomous vehicles."""
-    )
+Common applications include image recognition, natural language processing,
+recommendation systems, and autonomous vehicles.""")
 
-    (sample_docs_dir / "rag.txt").write_text(
-        """Retrieval-Augmented Generation (RAG)
+    (sample_docs_dir / "rag.txt").write_text("""Retrieval-Augmented Generation (RAG)
 
-RAG is a technique that combines information retrieval with text generation. 
-It works by first retrieving relevant documents from a knowledge base, then using 
+RAG is a technique that combines information retrieval with text generation.
+It works by first retrieving relevant documents from a knowledge base, then using
 those documents as context for a language model to generate responses.
 
 Benefits of RAG:
@@ -100,8 +96,7 @@ RAG systems typically consist of:
 1. Document ingestion and chunking
 2. Vector embedding and storage
 3. Similarity search for retrieval
-4. Context-aware generation with LLM"""
-    )
+4. Context-aware generation with LLM""")
 
     # Load and ingest documents
     print("📚 Loading documents...")

@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import AsyncIterator
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -11,16 +11,16 @@ class Document(BaseModel):
     """Document model with content and metadata."""
 
     content: str
-    metadata: Dict[str, Any] = {}
-    id: Optional[str] = None
+    metadata: dict[str, Any] = {}
+    id: str | None = None
 
 
 class Chunk(BaseModel):
     """Document chunk with metadata."""
 
     content: str
-    metadata: Dict[str, Any] = {}
-    embedding: Optional[List[float]] = None
+    metadata: dict[str, Any] = {}
+    embedding: list[float] | None = None
 
 
 class SearchResult(BaseModel):
@@ -28,7 +28,7 @@ class SearchResult(BaseModel):
 
     document: Document
     score: float
-    chunk_index: Optional[int] = None
+    chunk_index: int | None = None
 
 
 class VectorStore(ABC):
@@ -41,15 +41,18 @@ class VectorStore(ABC):
 
     @abstractmethod
     async def upsert(
-        self, collection_name: str, vectors: List[List[float]], payloads: List[Dict[str, Any]]
+        self,
+        collection_name: str,
+        vectors: list[list[float]],
+        payloads: list[dict[str, Any]],
     ) -> None:
         """Upsert vectors with payloads."""
         pass
 
     @abstractmethod
     async def search(
-        self, collection_name: str, query_vector: List[float], top_k: int = 5
-    ) -> List[SearchResult]:
+        self, collection_name: str, query_vector: list[float], top_k: int = 5
+    ) -> list[SearchResult]:
         """Search for similar vectors."""
         pass
 
@@ -68,12 +71,12 @@ class Embedding(ABC):
     """Abstract base class for embedding models."""
 
     @abstractmethod
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed a list of documents."""
         pass
 
     @abstractmethod
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Embed a single query."""
         pass
 
@@ -89,14 +92,14 @@ class LLM(ABC):
 
     @abstractmethod
     async def generate(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> str:
         """Generate text from prompt."""
         pass
 
     @abstractmethod
     async def generate_stream(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> AsyncIterator[str]:
         """Generate text with streaming."""
         pass
@@ -106,6 +109,6 @@ class Chunker(ABC):
     """Abstract base class for document chunkers."""
 
     @abstractmethod
-    def chunk(self, document: Document) -> List[Chunk]:
+    def chunk(self, document: Document) -> list[Chunk]:
         """Split document into chunks."""
         pass

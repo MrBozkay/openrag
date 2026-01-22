@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import AsyncIterator
-from typing import Any, Optional
+from typing import Any
 
 import httpx
 
@@ -23,10 +23,12 @@ class OllamaLLM(LLM):
         """
         self.config = config
         self.base_url = f"{config.host}:{config.port}"
-        logger.info(f"Initialized Ollama client with model: {config.model} at {self.base_url}")
+        logger.info(
+            f"Initialized Ollama client with model: {config.model} at {self.base_url}"
+        )
 
     async def generate(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> str:
         """Generate text from prompt.
 
@@ -50,7 +52,9 @@ class OllamaLLM(LLM):
                     "model": kwargs.get("model", self.config.model),
                     "messages": messages,
                     "options": {
-                        "temperature": kwargs.get("temperature", self.config.temperature),
+                        "temperature": kwargs.get(
+                            "temperature", self.config.temperature
+                        ),
                         "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
                     },
                     "stream": False,
@@ -64,7 +68,7 @@ class OllamaLLM(LLM):
             return content
 
     async def generate_stream(
-        self, prompt: str, system_prompt: Optional[str] = None, **kwargs: Any
+        self, prompt: str, system_prompt: str | None = None, **kwargs: Any
     ) -> AsyncIterator[str]:
         """Generate text with streaming.
 
@@ -81,33 +85,37 @@ class OllamaLLM(LLM):
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        async with httpx.AsyncClient(timeout=self.config.timeout) as client:
-            async with client.stream(
+        async with (
+            httpx.AsyncClient(timeout=self.config.timeout) as client,
+            client.stream(
                 "POST",
                 f"{self.base_url}/api/chat",
                 json={
                     "model": kwargs.get("model", self.config.model),
                     "messages": messages,
                     "options": {
-                        "temperature": kwargs.get("temperature", self.config.temperature),
+                        "temperature": kwargs.get(
+                            "temperature", self.config.temperature
+                        ),
                         "num_predict": kwargs.get("max_tokens", self.config.max_tokens),
                     },
                     "stream": True,
                 },
-            ) as response:
-                response.raise_for_status()
-                async for line in response.aiter_lines():
-                    if line:
-                        import json
+            ) as response,
+        ):
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if line:
+                    import json
 
-                        try:
-                            data = json.loads(line)
-                            if "message" in data and "content" in data["message"]:
-                                content = data["message"]["content"]
-                                if content:
-                                    yield content
-                        except json.JSONDecodeError:
-                            continue
+                    try:
+                        data = json.loads(line)
+                        if "message" in data and "content" in data["message"]:
+                            content = data["message"]["content"]
+                            if content:
+                                yield content
+                    except json.JSONDecodeError:
+                        continue
 
     async def list_models(self) -> list[str]:
         """List available models on Ollama server.
@@ -125,7 +133,7 @@ class OllamaLLM(LLM):
                 logger.error(f"Failed to list models: {e}")
                 return []
 
-    async def pull_model(self, model: Optional[str] = None) -> bool:
+    async def pull_model(self, model: str | None = None) -> bool:
         """Pull a model from Ollama library.
 
         Args:

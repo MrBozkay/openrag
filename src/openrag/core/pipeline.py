@@ -2,7 +2,7 @@
 
 import logging
 from collections.abc import AsyncGenerator
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from openrag.core.base import LLM, SearchResult
 from openrag.core.retriever import Retriever
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class RAGResponse:
     """RAG response with generated text and sources."""
 
-    def __init__(self, text: str, sources: List[SearchResult]) -> None:
+    def __init__(self, text: str, sources: list[SearchResult]) -> None:
         """Initialize RAG response.
 
         Args:
@@ -23,7 +23,7 @@ class RAGResponse:
         self.text = text
         self.sources = sources
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary.
 
         Returns:
@@ -53,7 +53,7 @@ Always cite the sources you use in your answer."""
         self,
         retriever: Retriever,
         llm: LLM,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
     ) -> None:
         """Initialize RAG pipeline.
 
@@ -69,7 +69,7 @@ Always cite the sources you use in your answer."""
     async def generate(
         self,
         query: str,
-        top_k: Optional[int] = None,
+        top_k: int | None = None,
         include_sources: bool = True,
         **llm_kwargs: Any,
     ) -> RAGResponse:
@@ -90,7 +90,9 @@ Always cite the sources you use in your answer."""
 
         if not sources:
             logger.warning("No relevant documents found")
-            response_text = "I couldn't find any relevant information to answer your question."
+            response_text = (
+                "I couldn't find any relevant information to answer your question."
+            )
             return RAGResponse(text=response_text, sources=[])
 
         # Construct context from sources
@@ -120,12 +122,14 @@ Answer:"""
         )
 
         logger.info(f"Generated response: {len(response_text)} characters")
-        return RAGResponse(text=response_text, sources=sources if include_sources else [])
+        return RAGResponse(
+            text=response_text, sources=sources if include_sources else []
+        )
 
     async def generate_stream(
         self,
         query: str,
-        top_k: Optional[int] = None,
+        top_k: int | None = None,
         **llm_kwargs: Any,
     ) -> AsyncGenerator[str, None]:
         """Generate response with streaming.

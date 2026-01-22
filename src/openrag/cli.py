@@ -3,7 +3,6 @@
 import asyncio
 import logging
 from pathlib import Path
-from typing import Optional
 
 import click
 from rich.console import Console
@@ -12,13 +11,10 @@ from rich.panel import Panel
 from rich.table import Table
 
 from openrag import __version__
-from openrag.chunking import get_chunker
 from openrag.config import OpenRAGConfig, VectorStoreType
 from openrag.core.ingestion import IngestionPipeline
-from openrag.core.pipeline import RAGPipeline
 from openrag.core.retriever import Retriever
 from openrag.embeddings import SentenceTransformerEmbedding
-from openrag.llms import HuggingFaceLLM, OllamaLLM, OpenAILLM
 from openrag.vector_stores import ChromaVectorStore, QdrantVectorStore
 
 console = Console()
@@ -52,7 +48,7 @@ def cli(ctx: click.Context, verbose: bool) -> None:
 @cli.command()
 @click.argument("project_name", default="my-rag-project")
 @click.option("--output", "-o", type=click.Path(), help="Output directory")
-def init(project_name: str, output: Optional[str]) -> None:
+def init(project_name: str, output: str | None) -> None:
     """Initialize a new OpenRAG project."""
     output_dir = Path(output) if output else Path.cwd() / project_name
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -122,13 +118,12 @@ qdrant_storage/
 @click.option("--config", "-c", type=click.Path(exists=True), help="Config file path")
 @click.option("--collection", default="openrag", help="Collection name")
 @click.pass_context
-def ingest(ctx: click.Context, input_path: str, config: Optional[str], collection: str) -> None:
+def ingest(
+    ctx: click.Context, input_path: str, config: str | None, collection: str
+) -> None:
     """Ingest documents into vector store."""
     # Load config
-    if config:
-        cfg = OpenRAGConfig.from_yaml(Path(config))
-    else:
-        cfg = OpenRAGConfig()
+    cfg = OpenRAGConfig.from_yaml(Path(config)) if config else OpenRAGConfig()
 
     async def run_ingestion() -> None:
         # Initialize components
@@ -175,14 +170,15 @@ def ingest(ctx: click.Context, input_path: str, config: Optional[str], collectio
 @click.option("--top-k", "-k", type=int, help="Number of results")
 @click.pass_context
 def search(
-    ctx: click.Context, query: str, config: Optional[str], collection: str, top_k: Optional[int]
+    ctx: click.Context,
+    query: str,
+    config: str | None,
+    collection: str,
+    top_k: int | None,
 ) -> None:
     """Search for documents."""
     # Load config
-    if config:
-        cfg = OpenRAGConfig.from_yaml(Path(config))
-    else:
-        cfg = OpenRAGConfig()
+    cfg = OpenRAGConfig.from_yaml(Path(config)) if config else OpenRAGConfig()
 
     async def run_search() -> None:
         # Initialize components
@@ -224,16 +220,13 @@ def search(
 @click.option("--port", type=int, help="API port")
 @click.pass_context
 def serve(
-    ctx: click.Context, config: Optional[str], host: Optional[str], port: Optional[int]
+    ctx: click.Context, config: str | None, host: str | None, port: int | None
 ) -> None:
     """Start API server."""
     import uvicorn
 
     # Load config
-    if config:
-        cfg = OpenRAGConfig.from_yaml(Path(config))
-    else:
-        cfg = OpenRAGConfig()
+    cfg = OpenRAGConfig.from_yaml(Path(config)) if config else OpenRAGConfig()
 
     # Override with CLI args
     if host:

@@ -1,7 +1,6 @@
 """Sentence Transformers embedding implementation."""
 
 import logging
-from typing import List
 
 from sentence_transformers import SentenceTransformer
 
@@ -26,7 +25,7 @@ class SentenceTransformerEmbedding(Embedding):
         self._dimension = self.model.get_sentence_embedding_dimension()
         logger.info(f"Loaded model with dimension: {self._dimension}")
 
-    def embed_documents(self, texts: List[str]) -> List[List[float]]:
+    def embed_documents(self, texts: list[str]) -> list[list[float]]:
         """Embed a list of documents.
 
         Args:
@@ -43,7 +42,7 @@ class SentenceTransformerEmbedding(Embedding):
         )
         return embeddings.tolist()
 
-    def embed_query(self, text: str) -> List[float]:
+    def embed_query(self, text: str) -> list[float]:
         """Embed a single query.
 
         Args:

@@ -2,7 +2,6 @@
 
 import logging
 from pathlib import Path
-from typing import List
 
 from docx import Document as DocxDocument
 from pypdf import PdfReader
@@ -25,7 +24,7 @@ class DocumentLoader:
         Returns:
             Document
         """
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         return Document(
@@ -47,7 +46,7 @@ class DocumentLoader:
         reader = PdfReader(file_path)
         content_parts = []
 
-        for page_num, page in enumerate(reader.pages, 1):
+        for _page_num, page in enumerate(reader.pages, 1):
             text = page.extract_text()
             if text.strip():
                 content_parts.append(text)
@@ -98,7 +97,7 @@ class DocumentLoader:
         Returns:
             Document
         """
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         return Document(
@@ -137,7 +136,7 @@ class DocumentLoader:
         return loader(file_path)
 
     @classmethod
-    def load_directory(cls, directory: Path, recursive: bool = True) -> List[Document]:
+    def load_directory(cls, directory: Path, recursive: bool = True) -> list[Document]:
         """Load all supported documents from directory.
 
         Args:

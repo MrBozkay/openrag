@@ -1,12 +1,11 @@
 """FastAPI application for OpenRAG."""
 
 import logging
-from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
@@ -105,30 +104,32 @@ class GenerateRequest(BaseModel):
     """Request model for generation."""
 
     query: str = Field(..., description="User query")
-    top_k: Optional[int] = Field(None, description="Number of documents to retrieve")
+    top_k: int | None = Field(None, description="Number of documents to retrieve")
     include_sources: bool = Field(True, description="Include source citations")
-    temperature: Optional[float] = Field(None, ge=0.0, le=2.0)
-    max_tokens: Optional[int] = Field(None, gt=0)
+    temperature: float | None = Field(None, ge=0.0, le=2.0)
+    max_tokens: int | None = Field(None, gt=0)
 
 
 class GenerateResponse(BaseModel):
     """Response model for generation."""
 
     text: str = Field(..., description="Generated text")
-    sources: List[Dict[str, Any]] = Field(default_factory=list, description="Source documents")
+    sources: list[dict[str, Any]] = Field(
+        default_factory=list, description="Source documents"
+    )
 
 
 class SearchRequest(BaseModel):
     """Request model for search."""
 
     query: str = Field(..., description="Search query")
-    top_k: Optional[int] = Field(None, description="Number of results")
+    top_k: int | None = Field(None, description="Number of results")
 
 
 class SearchResponse(BaseModel):
     """Response model for search."""
 
-    results: List[Dict[str, Any]] = Field(..., description="Search results")
+    results: list[dict[str, Any]] = Field(..., description="Search results")
 
 
 class IngestResponse(BaseModel):
@@ -190,7 +191,7 @@ async def generate(request: GenerateRequest) -> GenerateResponse:
         )
     except Exception as e:
         logger.error(f"Generation error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/v1/generate/stream")
@@ -251,11 +252,11 @@ async def search(request: SearchRequest) -> SearchResponse:
         )
     except Exception as e:
         logger.error(f"Search error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 @app.post("/v1/ingest", response_model=IngestResponse)
-async def ingest(files: List[UploadFile] = File(...)) -> IngestResponse:
+async def ingest(files: list[UploadFile] | None = None) -> IngestResponse:
     """Ingest documents.
 
     Args:
@@ -266,6 +267,9 @@ async def ingest(files: List[UploadFile] = File(...)) -> IngestResponse:
     """
     try:
         import tempfile
+
+        if files is None:
+            files = []
 
         documents = []
 
@@ -287,7 +291,9 @@ async def ingest(files: List[UploadFile] = File(...)) -> IngestResponse:
         if not documents:
             raise HTTPException(status_code=400, detail="No valid documents provided")
 
-        stats = await ingestion_pipeline.ingest_documents(documents, show_progress=False)
+        stats = await ingestion_pipeline.ingest_documents(
+            documents, show_progress=False
+        )
 
         return IngestResponse(
             documents=stats["documents"],
@@ -298,7 +304,7 @@ async def ingest(files: List[UploadFile] = File(...)) -> IngestResponse:
         raise
     except Exception as e:
         logger.error(f"Ingestion error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 if __name__ == "__main__":

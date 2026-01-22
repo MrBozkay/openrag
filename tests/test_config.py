@@ -9,8 +9,8 @@ from pydantic import ValidationError
 from openrag.config import (
     ChunkingConfig,
     EmbeddingConfig,
-    OpenAIConfig,
     OllamaConfig,
+    OpenAIConfig,
     OpenRAGConfig,
     QdrantConfig,
     RetrievalConfig,
