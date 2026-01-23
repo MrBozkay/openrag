@@ -16,7 +16,8 @@ RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Install dependencies
-COPY pyproject.toml ./
+COPY pyproject.toml README.md ./
+COPY src ./src
 RUN pip install --no-cache-dir --upgrade pip
 RUN pip install --no-cache-dir -e .
 
@@ -27,7 +28,7 @@ FROM python:3.11-slim-bookworm AS production
 ARG UID=10001
 ARG GID=10001
 RUN groupadd --gid $GID --system openrag && \
-    useradd --uid $UID --gid $GID --system --create-home /home/openrag openrag
+    useradd --uid $UID --gid $GID --system --create-home openrag
 
 WORKDIR /app
 

@@ -37,6 +37,34 @@ services:
     networks:
       - openrag-network
 
+  ollama:
+    image: ollama/ollama:latest
+    container_name: openrag-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+      - OLLAMA_ORIGINS=*
+    # Uncomment for GPU support (NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    restart: unless-stopped
+    networks:
+      - openrag-network
+
   openrag:
     build:
       context: .
@@ -51,13 +79,21 @@ services:
       - ./configs:/app/configs
       - ./logs:/app/logs
     environment:
+      # Vector Store
       - OPENRAG_VECTOR_STORE__TYPE=qdrant
       - OPENRAG_VECTOR_STORE__QDRANT__HOST=qdrant
       - OPENRAG_VECTOR_STORE__QDRANT__PORT=6333
-      - OPENRAG_LLM__PROVIDER=openai
+      # LLM Provider (switch between openai/ollama)
+      - OPENRAG_LLM__PROVIDER=${LLM_PROVIDER:-openai}
       - OPENRAG_LLM__OPENAI__API_KEY=${OPENAI_API_KEY}
+      - OPENRAG_LLM__OLLAMA__HOST=http://ollama
+      - OPENRAG_LLM__OLLAMA__PORT=11434
+      - OPENRAG_LLM__OLLAMA__MODEL=${OLLAMA_MODEL:-llama3}
+      # Redis
       - OPENRAG_REDIS__URL=redis://redis:6379
+      # Logging
       - OPENRAG_LOGGING__LEVEL=INFO
+      # API
       - OPENRAG_API__HOST=0.0.0.0
       - OPENRAG_API__PORT=8000
       - OPENRAG_API__RELOAD=false
@@ -65,6 +101,8 @@ services:
       qdrant:
         condition: service_healthy
       redis:
+        condition: service_healthy
+      ollama:
         condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
@@ -80,6 +118,8 @@ volumes:
   qdrant_storage:
     driver: local
   redis_data:
+    driver: local
+  ollama_models:
     driver: local
 
 networks:

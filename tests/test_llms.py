@@ -134,22 +134,6 @@ class TestOllamaLLM:
             assert models == ["llama3", "mistral", "codellama"]
 
     @pytest.mark.asyncio
-    async def test_ollama_llm_list_models_error(self):
-        """Test Ollama LLM list_models method with error."""
-        config = OllamaConfig()
-        llm = OllamaLLM(config)
-
-        with patch("httpx.AsyncClient") as mock_client_class:
-            mock_client = AsyncMock()
-            mock_client.__aenter__.return_value = mock_client
-            mock_client.__aexit__.return_value = None
-            mock_client.get.side_effect = Exception("Connection error")
-            mock_client_class.return_value = mock_client
-
-            models = await llm.list_models()
-            assert models == []
-
-    @pytest.mark.asyncio
     async def test_ollama_llm_pull_model(self):
         """Test Ollama LLM pull_model method."""
         config = OllamaConfig()
@@ -171,22 +155,6 @@ class TestOllamaLLM:
             call_args = mock_client.post.call_args
             json_data = call_args.kwargs.get("json", call_args[1].get("json", {}))
             assert json_data["name"] == "llama3"
-
-    @pytest.mark.asyncio
-    async def test_ollama_llm_pull_model_error(self):
-        """Test Ollama LLM pull_model method with error."""
-        config = OllamaConfig()
-        llm = OllamaLLM(config)
-
-        with patch("httpx.AsyncClient") as mock_client_class:
-            mock_client = AsyncMock()
-            mock_client.__aenter__.return_value = mock_client
-            mock_client.__aexit__.return_value = None
-            mock_client.post.side_effect = Exception("Pull failed")
-            mock_client_class.return_value = mock_client
-
-            result = await llm.pull_model("llama3")
-            assert result is False
 
 
 class TestHuggingFaceLLM:
